@@ -283,38 +283,42 @@
     \section{导出特征向量}\label{ux5bfcux51faux7279ux5f81ux5411ux91cf}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}2}]:} \PY{k+kn}{from} \PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{models} \PY{k}{import} \PY{n}{Model}
+{\color{incolor}In [{\color{incolor}8}]:} \PY{k+kn}{from} \PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{models} \PY{k}{import} \PY{n}{Model}
         \PY{k+kn}{from} \PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{layers} \PY{k}{import} \PY{n}{Input}\PY{p}{,} \PY{n}{GlobalAveragePooling2D}
         \PY{k+kn}{from} \PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{applications}\PY{n+nn}{.}\PY{n+nn}{resnet50} \PY{k}{import} \PY{n}{ResNet50}\PY{p}{,} \PY{n}{decode\PYZus{}predictions}
         \PY{k+kn}{from} \PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{applications} \PY{k}{import} \PY{o}{*}
         \PY{k+kn}{import} \PY{n+nn}{cv2}\PY{o}{,} \PY{n+nn}{os}\PY{o}{,} \PY{n+nn}{itertools}
         \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+        \PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{utils} \PY{k}{import} \PY{n}{shuffle}
+        
+        
+        \PY{k+kn}{from} \PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{models} \PY{k}{import} \PY{o}{*}
+        \PY{k+kn}{from} \PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{layers} \PY{k}{import} \PY{o}{*}
+        \PY{k+kn}{from} \PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{applications} \PY{k}{import} \PY{o}{*}
+        \PY{k+kn}{from} \PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{preprocessing}\PY{n+nn}{.}\PY{n+nn}{image} \PY{k}{import} \PY{o}{*}
 \end{Verbatim}
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}3}]:} \PY{n}{TRAIN\PYZus{}DIR} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{data/train/}\PY{l+s+s1}{\PYZsq{}}
+{\color{incolor}In [{\color{incolor}2}]:} \PY{n}{TRAIN\PYZus{}DIR} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{data/train/}\PY{l+s+s1}{\PYZsq{}}
         \PY{n}{TEST\PYZus{}DIR} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{data/test/}\PY{l+s+s1}{\PYZsq{}}
         
         \PY{n}{train\PYZus{}dir} \PY{o}{=} \PY{p}{[}\PY{n}{TRAIN\PYZus{}DIR} \PY{o}{+} \PY{n}{i} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{os}\PY{o}{.}\PY{n}{listdir}\PY{p}{(}\PY{n}{TRAIN\PYZus{}DIR}\PY{p}{)}\PY{p}{]}
-        \PY{n}{train\PYZus{}dog\PYZus{}dir} \PY{o}{=} \PY{p}{[}\PY{n}{TRAIN\PYZus{}DIR} \PY{o}{+} \PY{n}{i} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{os}\PY{o}{.}\PY{n}{listdir}\PY{p}{(}\PY{n}{TRAIN\PYZus{}DIR}\PY{p}{)} \PY{k}{if} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dog}\PY{l+s+s1}{\PYZsq{}} \PY{o+ow}{in} \PY{n}{i}\PY{p}{]}
-        \PY{n}{train\PYZus{}cat\PYZus{}dir} \PY{o}{=} \PY{p}{[}\PY{n}{TRAIN\PYZus{}DIR} \PY{o}{+} \PY{n}{i} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{os}\PY{o}{.}\PY{n}{listdir}\PY{p}{(}\PY{n}{TRAIN\PYZus{}DIR}\PY{p}{)} \PY{k}{if} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cat}\PY{l+s+s1}{\PYZsq{}} \PY{o+ow}{in} \PY{n}{i}\PY{p}{]}
+        \PY{c+c1}{\PYZsh{} train\PYZus{}dog\PYZus{}dir = [TRAIN\PYZus{}DIR + i for i in os.listdir(TRAIN\PYZus{}DIR) if \PYZsq{}dog\PYZsq{} in i]}
+        \PY{c+c1}{\PYZsh{} train\PYZus{}cat\PYZus{}dir = [TRAIN\PYZus{}DIR + i for i in os.listdir(TRAIN\PYZus{}DIR) if \PYZsq{}cat\PYZsq{} in i]}
         \PY{n}{test\PYZus{}dir} \PY{o}{=} \PY{p}{[}\PY{n}{TEST\PYZus{}DIR} \PY{o}{+} \PY{n}{i} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n}{os}\PY{o}{.}\PY{n}{listdir}\PY{p}{(}\PY{n}{TEST\PYZus{}DIR}\PY{p}{)}\PY{p}{]}
         
         \PY{c+c1}{\PYZsh{} train\PYZus{}dir = train\PYZus{}dir[:50]}
         \PY{c+c1}{\PYZsh{} test\PYZus{}dir = test\PYZus{}dir[:50]}
+        \PY{n}{train\PYZus{}dir}\PY{o}{.}\PY{n}{sort}\PY{p}{(}\PY{p}{)}
+        \PY{n}{test\PYZus{}dir}\PY{o}{.}\PY{n}{sort}\PY{p}{(}\PY{p}{)}
 \end{Verbatim}
 
 
     \section{save feature vector to file}\label{save-feature-vector-to-file}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor} }]:} \PY{k+kn}{from} \PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{models} \PY{k}{import} \PY{o}{*}
-        \PY{k+kn}{from} \PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{layers} \PY{k}{import} \PY{o}{*}
-        \PY{k+kn}{from} \PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{applications} \PY{k}{import} \PY{o}{*}
-        \PY{k+kn}{from} \PY{n+nn}{keras}\PY{n+nn}{.}\PY{n+nn}{preprocessing}\PY{n+nn}{.}\PY{n+nn}{image} \PY{k}{import} \PY{o}{*}
-        
-        \PY{n}{concat\PYZus{}train\PYZus{}feature\PYZus{}vector} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{ndarray}\PY{p}{(}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{train\PYZus{}dir}\PY{p}{)}\PY{p}{,} \PY{l+m+mi}{2048} \PY{o}{+} \PY{l+m+mi}{2048} \PY{o}{+} \PY{l+m+mi}{512} \PY{o}{+} \PY{l+m+mi}{512}\PY{p}{)}\PY{p}{,} \PY{n}{dtype} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{float32}\PY{p}{)}
+{\color{incolor}In [{\color{incolor} }]:} \PY{n}{concat\PYZus{}train\PYZus{}feature\PYZus{}vector} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{ndarray}\PY{p}{(}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{train\PYZus{}dir}\PY{p}{)}\PY{p}{,} \PY{l+m+mi}{2048} \PY{o}{+} \PY{l+m+mi}{2048} \PY{o}{+} \PY{l+m+mi}{512} \PY{o}{+} \PY{l+m+mi}{512}\PY{p}{)}\PY{p}{,} \PY{n}{dtype} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{float32}\PY{p}{)}
         \PY{n}{concat\PYZus{}test\PYZus{}feature\PYZus{}vector} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{ndarray}\PY{p}{(}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{test\PYZus{}dir}\PY{p}{)}\PY{p}{,} \PY{l+m+mi}{2048} \PY{o}{+} \PY{l+m+mi}{2048} \PY{o}{+} \PY{l+m+mi}{512} \PY{o}{+} \PY{l+m+mi}{512}\PY{p}{)}\PY{p}{,} \PY{n}{dtype} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{float32}\PY{p}{)}
         
         \PY{k}{def} \PY{n+nf}{get\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{(}\PY{n}{image\PYZus{}path\PYZus{}list}\PY{p}{,} \PY{n}{MODEL}\PY{p}{,} \PY{n}{input\PYZus{}size}\PY{p}{,} \PY{n}{preprocess\PYZus{}fun} \PY{o}{=} \PY{k+kc}{None}\PY{p}{)}\PY{p}{:}
@@ -370,24 +374,24 @@
             \PY{c+c1}{\PYZsh{}TODO: 修正InceptionV3模型的错误使用}
             \PY{c+c1}{\PYZsh{} get\PYZus{}feature\PYZus{}vector(image\PYZus{}path, InceptionV3, (299, 299, 3), inception\PYZus{}v3.preprocess\PYZus{}input)}
             \PY{c+c1}{\PYZsh{}VGG16输出(1, 512)}
-            \PY{n}{VGG16\PYZus{}\PYZus{}train\PYZus{}feature\PYZus{}vector\PYZus{}list} \PY{o}{=} \PY{n}{get\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{(}\PY{n}{train\PYZus{}dir}\PY{p}{,} \PY{n}{VGG16}\PY{p}{,} \PY{p}{(}\PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}
+            \PY{n}{VGG16\PYZus{}train\PYZus{}feature\PYZus{}vector\PYZus{}list} \PY{o}{=} \PY{n}{get\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{(}\PY{n}{train\PYZus{}dir}\PY{p}{,} \PY{n}{VGG16}\PY{p}{,} \PY{p}{(}\PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}
             \PY{c+c1}{\PYZsh{}VGG19输出(1, 512)}
-            \PY{n}{VGG19\PYZus{}\PYZus{}train\PYZus{}feature\PYZus{}vector\PYZus{}list} \PY{o}{=} \PY{n}{get\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{(}\PY{n}{train\PYZus{}dir}\PY{p}{,} \PY{n}{VGG19}\PY{p}{,} \PY{p}{(}\PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}
+            \PY{n}{VGG19\PYZus{}train\PYZus{}feature\PYZus{}vector\PYZus{}list} \PY{o}{=} \PY{n}{get\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{(}\PY{n}{train\PYZus{}dir}\PY{p}{,} \PY{n}{VGG19}\PY{p}{,} \PY{p}{(}\PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}
             \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{train\PYZus{}dir}\PY{p}{)}\PY{p}{)}\PY{p}{:}
                 \PY{n}{concat\PYZus{}train\PYZus{}feature\PYZus{}vector}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{concatenate}\PY{p}{(}\PY{p}{[}\PY{n}{ResNet50\PYZus{}train\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} 
                                                                 \PY{n}{Xception\PYZus{}train\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,}
-                                                                \PY{n}{VGG16\PYZus{}\PYZus{}train\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,}
-                                                                \PY{n}{VGG19\PYZus{}\PYZus{}train\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{]}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+                                                                \PY{n}{VGG16\PYZus{}train\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,}
+                                                                \PY{n}{VGG19\PYZus{}train\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{]}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
             
             \PY{n}{ResNet50\PYZus{}test\PYZus{}feature\PYZus{}vector\PYZus{}list} \PY{o}{=} \PY{n}{get\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{(}\PY{n}{test\PYZus{}dir}\PY{p}{,} \PY{n}{ResNet50}\PY{p}{,} \PY{p}{(}\PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}
             \PY{n}{Xception\PYZus{}test\PYZus{}feature\PYZus{}vector\PYZus{}list} \PY{o}{=} \PY{n}{get\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{(}\PY{n}{test\PYZus{}dir}\PY{p}{,} \PY{n}{Xception}\PY{p}{,} \PY{p}{(}\PY{l+m+mi}{299}\PY{p}{,} \PY{l+m+mi}{299}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{)}\PY{p}{,} \PY{n}{xception}\PY{o}{.}\PY{n}{preprocess\PYZus{}input}\PY{p}{)}
-            \PY{n}{VGG16\PYZus{}\PYZus{}test\PYZus{}feature\PYZus{}vector\PYZus{}list} \PY{o}{=} \PY{n}{get\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{(}\PY{n}{test\PYZus{}dir}\PY{p}{,} \PY{n}{VGG16}\PY{p}{,} \PY{p}{(}\PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}
-            \PY{n}{VGG19\PYZus{}\PYZus{}test\PYZus{}feature\PYZus{}vector\PYZus{}list} \PY{o}{=} \PY{n}{get\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{(}\PY{n}{test\PYZus{}dir}\PY{p}{,} \PY{n}{VGG19}\PY{p}{,} \PY{p}{(}\PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}
+            \PY{n}{VGG16\PYZus{}test\PYZus{}feature\PYZus{}vector\PYZus{}list} \PY{o}{=} \PY{n}{get\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{(}\PY{n}{test\PYZus{}dir}\PY{p}{,} \PY{n}{VGG16}\PY{p}{,} \PY{p}{(}\PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}
+            \PY{n}{VGG19\PYZus{}test\PYZus{}feature\PYZus{}vector\PYZus{}list} \PY{o}{=} \PY{n}{get\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{(}\PY{n}{test\PYZus{}dir}\PY{p}{,} \PY{n}{VGG19}\PY{p}{,} \PY{p}{(}\PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{)}\PY{p}{)}
             \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{test\PYZus{}dir}\PY{p}{)}\PY{p}{)}\PY{p}{:}
                 \PY{n}{concat\PYZus{}test\PYZus{}feature\PYZus{}vector}\PY{p}{[}\PY{n}{i}\PY{p}{]} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{concatenate}\PY{p}{(}\PY{p}{[}\PY{n}{ResNet50\PYZus{}test\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} 
                                                                 \PY{n}{Xception\PYZus{}test\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,}
-                                                                \PY{n}{VGG16\PYZus{}\PYZus{}test\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,}
-                                                                \PY{n}{VGG19\PYZus{}\PYZus{}test\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{]}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+                                                                \PY{n}{VGG16\PYZus{}test\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,}
+                                                                \PY{n}{VGG19\PYZus{}test\PYZus{}feature\PYZus{}vector\PYZus{}list}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{]}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
             
             \PY{n}{np}\PY{o}{.}\PY{n}{savetxt}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{concat\PYZus{}train\PYZus{}feature\PYZus{}vector.npy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{concat\PYZus{}train\PYZus{}feature\PYZus{}vector}\PY{p}{,} \PY{n}{delimiter} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{,}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
             \PY{n}{np}\PY{o}{.}\PY{n}{savetxt}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{concat\PYZus{}test\PYZus{}feature\PYZus{}vector.npy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{concat\PYZus{}test\PYZus{}feature\PYZus{}vector}\PY{p}{,} \PY{n}{delimiter} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{,}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
@@ -400,64 +404,135 @@
 \end{Verbatim}
 
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-start resnet50 prediction:
->>>>>>>>>>>>
-    \end{Verbatim}
+    \section{read feature vector from
+file}\label{read-feature-vector-from-file}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}66}]:} \PY{n}{read\PYZus{}concat\PYZus{}test\PYZus{}feature\PYZus{}vector} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{loadtxt}\PY{p}{(}\PY{n+nb}{open}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{concat\PYZus{}test\PYZus{}feature\PYZus{}vector.npy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{rb}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{,}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{float32}\PY{p}{)}
-         \PY{n}{read\PYZus{}concat\PYZus{}test\PYZus{}feature\PYZus{}vector}\PY{p}{[}\PY{l+m+mi}{40}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2331}\PY{p}{]}
+{\color{incolor}In [{\color{incolor}3}]:} \PY{n}{concat\PYZus{}test\PYZus{}feature\PYZus{}vector} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{loadtxt}\PY{p}{(}\PY{n+nb}{open}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{concat\PYZus{}test\PYZus{}feature\PYZus{}vector.npy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{rb}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{,}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{float32}\PY{p}{)}
+        \PY{n}{concat\PYZus{}train\PYZus{}feature\PYZus{}vector} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{loadtxt}\PY{p}{(}\PY{n+nb}{open}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{concat\PYZus{}train\PYZus{}feature\PYZus{}vector.npy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{rb}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,} \PY{n}{delimiter}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{,}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{float32}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}4}]:} \PY{n}{concat\PYZus{}train\PYZus{}feature\PYZus{}vector}\PY{o}{.}\PY{n}{shape}
 \end{Verbatim}
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}66}]:} 0.33034202
+{\color{outcolor}Out[{\color{outcolor}4}]:} (25000, 5120)
 \end{Verbatim}
             
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}83}]:} \PY{n}{MODEL} \PY{o}{=} \PY{n}{VGG16}
-         \PY{n}{input\PYZus{}size} \PY{o}{=} \PY{p}{(}\PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{224}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{)}
-         \PY{n}{preprocess\PYZus{}fun} \PY{o}{=} \PY{k+kc}{None}
-         
-         \PY{n}{inputs} \PY{o}{=} \PY{n}{Input}\PY{p}{(}\PY{n}{input\PYZus{}size}\PY{p}{)}
-         \PY{k}{if} \PY{n}{preprocess\PYZus{}fun}\PY{p}{:}
-             \PY{n}{inputs} \PY{o}{=} \PY{n}{Lambda}\PY{p}{(}\PY{n}{preprocess\PYZus{}fun}\PY{p}{)}\PY{p}{(}\PY{n}{inputs}\PY{p}{)}
-                 
-         \PY{c+c1}{\PYZsh{} x = MODEL(input\PYZus{}tensor = inputs, include\PYZus{}top = False).output}
-         \PY{c+c1}{\PYZsh{} outputs = GlobalAveragePooling2D()(x)}
-         \PY{c+c1}{\PYZsh{} model = Model(inputs = inputs, outputs = outputs)}
-         
-         \PY{n}{base\PYZus{}model} \PY{o}{=} \PY{n}{MODEL}\PY{p}{(}\PY{n}{input\PYZus{}tensor} \PY{o}{=} \PY{n}{inputs}\PY{p}{,} \PY{n}{weights} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{imagenet}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{include\PYZus{}top} \PY{o}{=} \PY{k+kc}{False}\PY{p}{)}
-         \PY{n}{model} \PY{o}{=} \PY{n}{Model}\PY{p}{(}\PY{n}{base\PYZus{}model}\PY{o}{.}\PY{n}{input}\PY{p}{,} \PY{n}{GlobalAveragePooling2D}\PY{p}{(}\PY{p}{)}\PY{p}{(}\PY{n}{base\PYZus{}model}\PY{o}{.}\PY{n}{output}\PY{p}{)}\PY{p}{)}
-         
-         \PY{c+c1}{\PYZsh{} model = MODEL(input\PYZus{}tensor = inputs)}
-         \PY{c+c1}{\PYZsh{} print(\PYZpc{}MODEL.func\PYZus{}name)}
-         
-                 
-         \PY{n}{image\PYZus{}path} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{data/train/cat.2.jpg}\PY{l+s+s1}{\PYZsq{}}
-         \PY{n}{input\PYZus{}image} \PY{o}{=} \PY{n}{cv2}\PY{o}{.}\PY{n}{imread}\PY{p}{(}\PY{n}{image\PYZus{}path}\PY{p}{,} \PY{n}{cv2}\PY{o}{.}\PY{n}{IMREAD\PYZus{}COLOR}\PY{p}{)}
-         \PY{n}{input\PYZus{}image} \PY{o}{=} \PY{n}{cv2}\PY{o}{.}\PY{n}{resize}\PY{p}{(}\PY{n}{input\PYZus{}image}\PY{p}{,} \PY{p}{(}\PY{n}{input\PYZus{}size}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{input\PYZus{}size}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{,} \PY{n}{interpolation} \PY{o}{=} \PY{n}{cv2}\PY{o}{.}\PY{n}{INTER\PYZus{}CUBIC}\PY{p}{)}
-         \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{input\PYZus{}image shape before: }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{input\PYZus{}image}\PY{o}{.}\PY{n}{shape}\PY{p}{)}\PY{p}{)}
-         \PY{n}{input\PYZus{}image} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{expand\PYZus{}dims}\PY{p}{(}\PY{n}{input\PYZus{}image}\PY{p}{,} \PY{n}{axis} \PY{o}{=} \PY{l+m+mi}{0}\PY{p}{)}
-         \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{input\PYZus{}image shape after: }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{input\PYZus{}image}\PY{o}{.}\PY{n}{shape}\PY{p}{)}\PY{p}{)}
-         \PY{n}{train\PYZus{}feature} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{input\PYZus{}image}\PY{p}{,} \PY{n}{verbose} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{)}
-         \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{train\PYZus{}feature shape: }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{train\PYZus{}feature}\PY{o}{.}\PY{n}{shape}\PY{p}{)}\PY{p}{)}
-         \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{train\PYZus{}feature shape: }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n+nb}{type}\PY{p}{(}\PY{n}{train\PYZus{}feature}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}\PY{p}{)}\PY{p}{)}
-         \PY{n+nb}{print}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{train\PYZus{}feature vector: }\PY{l+s+si}{\PYZob{}\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{train\PYZus{}feature}\PY{p}{)}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}5}]:} \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{image} \PY{k}{as} \PY{n+nn}{mpimg}
+        \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+        \PY{o}{\PYZpc{}}\PY{k}{matplotlib} inline
+        
+        \PY{n}{labels} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+        \PY{k}{for} \PY{n}{train\PYZus{}image\PYZus{}dir} \PY{o+ow}{in} \PY{n}{train\PYZus{}dir}\PY{p}{:}
+            \PY{k}{if} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dog}\PY{l+s+s1}{\PYZsq{}} \PY{o+ow}{in} \PY{n}{train\PYZus{}image\PYZus{}dir}\PY{p}{:}
+                \PY{n}{labels}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{)}
+            \PY{k}{else}\PY{p}{:}
+                \PY{n}{labels}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{)}
+                
+        \PY{n}{y\PYZus{}train} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{labels}\PY{p}{)}
+        \PY{n}{x\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train} \PY{o}{=} \PY{n}{shuffle}\PY{p}{(}\PY{n}{concat\PYZus{}train\PYZus{}feature\PYZus{}vector}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{)}
 \end{Verbatim}
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-input\_image shape before: (224, 224, 3)
-input\_image shape after: (1, 224, 224, 3)
-1/1 [==============================] - 1s
-train\_feature shape: (1, 2048)
-train\_feature shape: <class 'numpy.float32'>
-train\_feature vector: [[ 0.04036946  0.26829532  0.29243729 {\ldots},  0.          0.26024085
-   0.83237869]]
+{\color{incolor}In [{\color{incolor}6}]:} \PY{n}{y\PYZus{}train}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}6}]:} array([1, 1, 0, {\ldots}, 1, 0, 1])
+\end{Verbatim}
+            
+    \section{define new model and
+predict}\label{define-new-model-and-predict}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}9}]:} \PY{n}{inputs} \PY{o}{=} \PY{n}{Input}\PY{p}{(}\PY{n}{shape} \PY{o}{=} \PY{p}{(}\PY{n}{x\PYZus{}train}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{p}{)}\PY{p}{)}
+        \PY{n}{x} \PY{o}{=} \PY{n}{Dropout}\PY{p}{(}\PY{l+m+mf}{0.5}\PY{p}{)}\PY{p}{(}\PY{n}{inputs}\PY{p}{)}
+        \PY{n}{predictions} \PY{o}{=} \PY{n}{Dense}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{n}{activation}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sigmoid}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{p}{(}\PY{n}{x}\PY{p}{)}
+        \PY{n}{model} \PY{o}{=} \PY{n}{Model}\PY{p}{(}\PY{n}{inputs} \PY{o}{=} \PY{n}{inputs}\PY{p}{,} \PY{n}{outputs} \PY{o}{=} \PY{n}{predictions}\PY{p}{)}
+        \PY{n}{model}\PY{o}{.}\PY{n}{compile}\PY{p}{(}\PY{n}{optimizer}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{adadelta}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{loss}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{binary\PYZus{}crossentropy}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{metrics}\PY{o}{=}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{accuracy}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+        \PY{n}{model}\PY{o}{.}\PY{n}{fit}\PY{p}{(}\PY{n}{x\PYZus{}train}\PY{p}{,} \PY{n}{y\PYZus{}train}\PY{p}{,} \PY{n}{batch\PYZus{}size}\PY{o}{=}\PY{l+m+mi}{128}\PY{p}{,} \PY{n}{nb\PYZus{}epoch}\PY{o}{=}\PY{l+m+mi}{8}\PY{p}{,} \PY{n}{validation\PYZus{}split}\PY{o}{=}\PY{l+m+mf}{0.2}\PY{p}{)}
+        \PY{n}{y\PYZus{}pre} \PY{o}{=} \PY{n}{model}\PY{o}{.}\PY{n}{predict}\PY{p}{(}\PY{n}{concat\PYZus{}test\PYZus{}feature\PYZus{}vector}\PY{p}{)}
+        \PY{n}{y\PYZus{}pre}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+/anaconda3/envs/dog-project/lib/python3.5/site-packages/keras/engine/training.py:1393: UserWarning: The `nb\_epoch` argument in `fit` has been renamed `epochs`.
+  warnings.warn('The `nb\_epoch` argument in `fit` '
 
     \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Train on 20000 samples, validate on 5000 samples
+Epoch 1/8
+20000/20000 [==============================] - 1s - loss: 0.3707 - acc: 0.8913 - val\_loss: 0.0573 - val\_acc: 0.9778
+Epoch 2/8
+20000/20000 [==============================] - 0s - loss: 0.0895 - acc: 0.9707 - val\_loss: 0.0458 - val\_acc: 0.9840
+Epoch 3/8
+20000/20000 [==============================] - 0s - loss: 0.0602 - acc: 0.9805 - val\_loss: 0.0395 - val\_acc: 0.9854
+Epoch 4/8
+20000/20000 [==============================] - 0s - loss: 0.0470 - acc: 0.9845 - val\_loss: 0.0340 - val\_acc: 0.9882
+Epoch 5/8
+20000/20000 [==============================] - 0s - loss: 0.0391 - acc: 0.9863 - val\_loss: 0.0349 - val\_acc: 0.9880
+Epoch 6/8
+20000/20000 [==============================] - 0s - loss: 0.0323 - acc: 0.9884 - val\_loss: 0.0323 - val\_acc: 0.9892
+Epoch 7/8
+20000/20000 [==============================] - 0s - loss: 0.0309 - acc: 0.9903 - val\_loss: 0.0302 - val\_acc: 0.9900
+Epoch 8/8
+20000/20000 [==============================] - 0s - loss: 0.0285 - acc: 0.9909 - val\_loss: 0.0301 - val\_acc: 0.9904
+
+    \end{Verbatim}
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}9}]:} array([[  1.00000000e+00],
+               [  8.01979768e-05],
+               [  1.04454593e-05],
+               {\ldots}, 
+               [  1.00000000e+00],
+               [  9.30272051e-07],
+               [  2.91424931e-06]], dtype=float32)
+\end{Verbatim}
+            
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}36}]:} \PY{n}{y\PYZus{}pre} \PY{o}{=} \PY{n}{y\PYZus{}pre}\PY{o}{.}\PY{n}{clip}\PY{p}{(}\PY{n+nb}{min}\PY{o}{=}\PY{l+m+mf}{0.005}\PY{p}{,} \PY{n+nb}{max}\PY{o}{=}\PY{l+m+mf}{0.995}\PY{p}{)}
+         \PY{k+kn}{import} \PY{n+nn}{csv}
+         
+         \PY{k}{def} \PY{n+nf}{sort\PYZus{}y\PYZus{}pre\PYZus{}by\PYZus{}id}\PY{p}{(}\PY{n}{y\PYZus{}pre}\PY{p}{,} \PY{n}{test\PYZus{}dir}\PY{p}{)}\PY{p}{:}
+             \PY{n}{y\PYZus{}pre\PYZus{}order\PYZus{}by\PYZus{}id} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{y\PYZus{}pre}\PY{p}{)}\PY{p}{,}\PY{p}{)}\PY{p}{)}
+             \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{test\PYZus{}dir}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                 \PY{n}{idx} \PY{o}{=} \PY{n+nb}{int}\PY{p}{(}\PY{n}{test\PYZus{}dir}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{10}\PY{p}{:}\PY{o}{\PYZhy{}}\PY{l+m+mi}{4}\PY{p}{]}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}
+         \PY{c+c1}{\PYZsh{}         print([i, idx])}
+                 \PY{n}{y\PYZus{}pre\PYZus{}order\PYZus{}by\PYZus{}id}\PY{p}{[}\PY{n}{idx}\PY{p}{]} \PY{o}{=} \PY{n}{y\PYZus{}pre}\PY{p}{[}\PY{n}{i}\PY{p}{]}
+             \PY{k}{return} \PY{n}{y\PYZus{}pre\PYZus{}order\PYZus{}by\PYZus{}id}
+         
+         \PY{n}{y\PYZus{}pre\PYZus{}order\PYZus{}by\PYZus{}id} \PY{o}{=} \PY{n}{sort\PYZus{}y\PYZus{}pre\PYZus{}by\PYZus{}id}\PY{p}{(}\PY{n}{y\PYZus{}pre}\PY{p}{,} \PY{n}{test\PYZus{}dir}\PY{p}{)}
+         
+         \PY{c+c1}{\PYZsh{}python2可以用file替代open}
+         \PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{submission.csv}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{w}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)} \PY{k}{as} \PY{n}{csvfile}\PY{p}{:} 
+             \PY{n}{writer} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{writer}\PY{p}{(}\PY{n}{csvfile}\PY{p}{)}
+             \PY{c+c1}{\PYZsh{}先写入columns\PYZus{}nameΩΩΩ}
+             \PY{n}{writer}\PY{o}{.}\PY{n}{writerow}\PY{p}{(}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{id}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{label}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{)}
+             \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{y\PYZus{}pre\PYZus{}order\PYZus{}by\PYZus{}id}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+                 \PY{n}{writer}\PY{o}{.}\PY{n}{writerow}\PY{p}{(}\PY{p}{[}\PY{n}{i} \PY{o}{+} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{y\PYZus{}pre\PYZus{}order\PYZus{}by\PYZus{}id}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}31}]:} 
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor} }]:} 
+\end{Verbatim}
+
 
 
     % Add a bibliography block to the postdoc
